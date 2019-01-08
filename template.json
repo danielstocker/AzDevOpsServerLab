@@ -57,6 +57,14 @@
         "subnetName": {
            "type": "string",
             "defaultValue": "default"
+        },
+        "databaseSkuName": {
+            "type": "string",
+            "defaultValue": "GP_Gen5_4"
+        },
+        "databaseTierName": {
+            "type": "string",
+            "defaultValue": "GeneralPurpose"
         }
     },
     "variables": {
@@ -68,7 +76,12 @@
         "networkSecurityGroupName": "[concat(toLower(parameters('virtualMachineName')), '-nsg')]",
 
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
-        "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+        "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+
+        "databaseServerName": "[concat(toLower(parameters('virtualMachineName')), 'serv')]",
+        "databaseDatabaseName": "[concat(toLower(parameters('virtualMachineName')), 'db')]",
+        "databaseCollation": "SQL_Latin1_General_CP1_CI_AS"
+
     },
     "resources": [
         {
@@ -201,6 +214,53 @@
                 "name": "Standard_LRS"
             },
             "tags": {}
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "name": "[variables('databaseServerName')]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[parameters('adminUsername')]",
+                "administratorLoginPassword": "[parameters('adminPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "type": "databases",
+                    "sku": {
+                        "name": "[parameters('databaseSkuName')]",
+                        "tier": "[parameters('databaseTierName')]"
+                    },
+                    "name": "[variables('databaseDatabaseName')]",
+                    "apiVersion": "2017-10-01-preview",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "collation": "[variables('databaseCollation')]",
+                        "maxSizeBytes": 137438953472,
+                        "zoneRedundant": "false",
+                        "licenseType": "LicenseIncluded",
+                        "readScale": "Disabled",
+                        "readReplicaCount": "0"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', variables('databaseServerName'))]"
+                    ]
+                },
+                {
+                    "type": "firewallrules",
+                    "name": "AllowAllWindowsAzureIps",
+                    "apiVersion": "2014-04-01-preview",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', variables('databaseServerName'))]"
+                    ]
+                }
+            ]
         }
     ],
     "outputs": {

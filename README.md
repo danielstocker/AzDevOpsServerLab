@@ -12,9 +12,9 @@ The ARM template creates
 
 The deployment script places the machine script on the storage account
 
-The deployment script is run on the application tier machine using a custom script extension
+The machine script is run on the application tier machine using a custom script extension
 - It will install AD Domain Services (default domain name will be LAB and lab.internal) 
 - Download the Azure DevOps server setup to the C:\ drive
 
-Once the deployment script has run you should be able to log onto the machine and install Azure DevOps Server 2019. 
+Once the machine script has run you should be able to log onto the machine and install Azure DevOps Server 2019. 
 The installer will be located on the C: drive. 
