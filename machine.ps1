@@ -11,6 +11,8 @@ Install-WindowsFeature AD-Domain-Services
 Import-Module ADDSDeployment
 
 # set up AD 
-Install-ADDSForest -CreateDnsDelegation $false -DatabasePath "C:\Windows\NTDS" -DomainMode "Win2012R2" -DomainName "lab.local" -DomainNetbiosName "LAB" -ForestMode "Win2012R2" -InstallDns $true -LogPath "C:\Windows\NTDS" -NoRebootOnCompletion $false -SysvolPath "C:\Windows\SYSVOL" -Force
+# we will supply a generic password
+# NEVER USE THIS SCRIPT FOR A PRODUCTION DEPLOYMENT !
+Install-ADDSForest -DatabasePath "C:\Windows\NTDS" -DomainMode "Win2012R2" -DomainName "lab.local" -DomainNetbiosName "LAB" -ForestMode "Win2012R2" -InstallDns -LogPath "C:\Windows\NTDS" -SysvolPath "C:\Windows\SYSVOL" -SafeModeAdministratorPassword (ConvertTo-SecureString -String "abcd1234!!123abcd" -AsPlainText -Force) -Force
 
 # the machine will restart at this point
