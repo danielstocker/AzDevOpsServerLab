@@ -55,7 +55,7 @@
             "type": "secureString"
         },
         "subnetName": {
-           "type": "string",
+            "type": "string",
             "defaultValue": "default"
         },
         "databaseSkuName": {
@@ -74,14 +74,11 @@
         "publicIpAddressName": "[concat(toLower(parameters('virtualMachineName')), '-pub')]",
         "virtualNetworkName": "[concat(toLower(parameters('virtualMachineName')), '-net')]",
         "networkSecurityGroupName": "[concat(toLower(parameters('virtualMachineName')), '-nsg')]",
-
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-
         "databaseServerName": "[concat(toLower(parameters('virtualMachineName')), 'serv')]",
         "databaseDatabaseName": "[concat(toLower(parameters('virtualMachineName')), 'db')]",
         "databaseCollation": "SQL_Latin1_General_CP1_CI_AS"
-
     },
     "resources": [
         {
@@ -161,6 +158,9 @@
                 "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('diagnosticsStorageAccountName'))]"
             ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
@@ -203,6 +203,24 @@
                 }
             },
             "tags": {}
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualMachineName'),'/ManagedIdentityExtensionForWindows')]",
+            "apiVersion": "2018-06-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.ManagedIdentity",
+                "type": "ManagedIdentityExtensionForWindows",
+                "typeHandlerVersion": "1.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "port": 50342
+                }
+            }
         },
         {
             "name": "[variables('diagnosticsStorageAccountName')]",
