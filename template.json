@@ -60,11 +60,11 @@
         },
         "databaseSkuName": {
             "type": "string",
-            "defaultValue": "GP_Gen5_4"
+            "defaultValue": "S3"
         },
         "databaseTierName": {
             "type": "string",
-            "defaultValue": "GeneralPurpose"
+            "defaultValue": "Standard"
         }
     },
     "variables": {
