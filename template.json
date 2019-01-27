@@ -77,7 +77,6 @@
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "databaseServerName": "[concat(toLower(parameters('virtualMachineName')), 'serv')]",
-        "databaseDatabaseName": "[concat(toLower(parameters('virtualMachineName')), 'db')]",
         "databaseCollation": "SQL_Latin1_General_CP1_CI_AS"
     },
     "resources": [
@@ -250,7 +249,28 @@
                         "name": "[parameters('databaseSkuName')]",
                         "tier": "[parameters('databaseTierName')]"
                     },
-                    "name": "[variables('databaseDatabaseName')]",
+                    "name": "AzureDevOps_Configuration",
+                    "apiVersion": "2017-10-01-preview",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "collation": "[variables('databaseCollation')]",
+                        "maxSizeBytes": 137438953472,
+                        "zoneRedundant": "false",
+                        "licenseType": "LicenseIncluded",
+                        "readScale": "Disabled",
+                        "readReplicaCount": "0"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', variables('databaseServerName'))]"
+                    ]
+                },
+                {
+                    "type": "databases",
+                    "sku": {
+                        "name": "[parameters('databaseSkuName')]",
+                        "tier": "[parameters('databaseTierName')]"
+                    },
+                    "name": "AzureDevOps_Collection",
                     "apiVersion": "2017-10-01-preview",
                     "location": "[resourceGroup().location]",
                     "properties": {
