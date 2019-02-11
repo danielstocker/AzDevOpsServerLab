@@ -1,5 +1,5 @@
 # download tfs
-Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2041267" -OutFile "C:\devopsserver2019rc1.exe"
+Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2041267" -OutFile "C:\devopsserver2019.exe"
 
 # make sure we can use the server manager commands
 Import-Module ServerManager
