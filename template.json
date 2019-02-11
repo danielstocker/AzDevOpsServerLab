@@ -46,7 +46,7 @@
         },
         "virtualMachineSize": {
             "type": "string",
-            "defaultValue": "Standard_F2s"
+            "defaultValue": "Standard_F4s"
         },
         "adminUsername": {
             "type": "string"
